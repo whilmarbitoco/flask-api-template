@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
-from app.errors.handlers import NotFoundError, APIError, ValidationError
+from app.errors.handlers import APIError
+from app.api.v1.users.route import users_bp
 
 
 
@@ -10,8 +11,8 @@ def create_app():
     def handle_api_errors(error):
         return jsonify(error.to_json()), error.status_code
 
-    @app.route("/test")
-    def test():
-        raise ValidationError(message="This resource was not found.")
+    
+    # Register blueprints
+    app.register_blueprint(users_bp)
 
     return app
