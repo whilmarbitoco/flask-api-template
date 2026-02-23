@@ -1,9 +1,12 @@
+import os
 from flask import Flask, jsonify
 from app.errors.handlers import APIError
 from app.core.logging import configure_logging
 from app.api.v1.users.route import users_bp
+from app.core.config import config_map
 
 
+env = os.getenv("FLASK_ENV", "development")
 
 def create_app():
     app = Flask(__name__)
@@ -13,6 +16,7 @@ def create_app():
         return jsonify(error.to_json()), error.status_code
 
     # Registered middleware, extensions
+    app.config.from_object(config_map[env])
     configure_logging()
 
     # Register blueprints
