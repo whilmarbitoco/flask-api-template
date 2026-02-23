@@ -2,3 +2,5 @@ venv/
 app/__pycache__/
 *.pyc
 .env
+app/core/app.db
+app/core/app.db-journal
