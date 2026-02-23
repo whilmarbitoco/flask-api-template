@@ -7,11 +7,32 @@ class BaseConfig:
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL") or \
         f"sqlite:///{os.path.join(basedir, 'app.db')}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # JWT Configuration
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", SECRET_KEY)
+    JWT_ACCESS_TOKEN_EXPIRES = 900  # 15 minutes
+    JWT_REFRESH_TOKEN_EXPIRES = 2592000  # 30 days
+    JWT_TOKEN_LOCATION = ["headers", "cookies"]
+    JWT_COOKIE_SECURE = True
+    JWT_COOKIE_CSRF_PROTECT = False
+    
+    # CORS Configuration
+    CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+    CORS_SUPPORTS_CREDENTIALS = True
+    
+    # Security Headers (Talisman)
+    TALISMAN_FORCE_HTTPS = True
+    TALISMAN_STRICT_TRANSPORT_SECURITY = True
+    TALISMAN_CONTENT_SECURITY_POLICY = {
+        'default-src': "'self'",
+        'script-src': "'self'",
+        'style-src': "'self'"
+    }
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
-    # You can also override it specifically here if you prefer
-    # SQLALCHEMY_DATABASE_URI = "sqlite:///dev.db"
+    JWT_COOKIE_SECURE = False
+    TALISMAN_FORCE_HTTPS = False
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
