@@ -1,11 +1,13 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from marshmallow import ValidationError as MarshmallowValidationError
-from app.extensions import limiter
+from app.extensions import limiter, db
 from app.utils.sanitizer import sanitize_dict
+from app.utils.permissions import require_permission
 from app.modules.example.model import ExampleCreate, ExampleRead
 from app.modules.example.service import ExampleService
 from app.errors.handlers import ValidationError
+from app.database.schema import User
 
 example_bp = Blueprint("example", __name__, url_prefix="/example")
 
@@ -29,7 +31,7 @@ def get_example(user_id):
 
 
 @example_bp.route("", methods=["POST"])
-@jwt_required()
+@require_permission("example.create")  # layer 1: role-permission check
 @limiter.limit("10 per minute")
 def create_example():
     try:
@@ -40,8 +42,10 @@ def create_example():
 
 
 @example_bp.route("/<int:user_id>", methods=["DELETE"])
-@jwt_required()
+@require_permission("example.delete")  # layer 1: role-permission check
 @limiter.limit("10 per minute")
 def delete_example(user_id):
+    actor = db.session.get(User, get_jwt_identity())
+    # layer 2: ExamplePolicy().delete(actor, target) would go here
     service.delete(user_id)
     return jsonify({"message": "Deleted successfully"}), 200

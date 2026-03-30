@@ -4,7 +4,7 @@ from app.database.schema import User
 
 class ExampleRepository:
     def get_all(self):
-        return db.session.execute(db.select(User)).scalars().all()
+        return db.session.execute(db.select(User)).unique().scalars().all()
 
     def get_by_id(self, user_id):
         return db.session.get(User, user_id)
