@@ -8,6 +8,10 @@ class BaseConfig:
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", f"sqlite:///{os.path.join(basedir, 'app.db')}")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # Timezone — default for all users unless overridden per-user
+    # Override via env var: DEFAULT_TIMEZONE=Asia/Manila
+    DEFAULT_TIMEZONE = os.getenv("DEFAULT_TIMEZONE", "Asia/Manila")
+
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", SECRET_KEY)
     JWT_ACCESS_TOKEN_EXPIRES = 900
     JWT_REFRESH_TOKEN_EXPIRES = 2592000

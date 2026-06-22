@@ -1,4 +1,5 @@
 from app.extensions import db
+from app.utils.timezone import utc_now
 
 
 role_permissions = db.Table(
@@ -35,3 +36,5 @@ class User(db.Model):
     password_hash = db.Column(db.String(255), nullable=True)
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=True)
     role = db.relationship("Role", lazy="joined")
+    timezone = db.Column(db.String(64), nullable=False, default="Asia/Manila")
+    created_at = db.Column(db.DateTime(timezone=True), default=utc_now)
